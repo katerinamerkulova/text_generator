@@ -4,8 +4,8 @@ Tests decode_text function
 """
 
 import unittest
-from lab_4.main import encode_text, WordStorage, LikelihoodBasedTextGenerator, decode_text
-from lab_4.ngrams.ngram_trie import NGramTrie
+from main import encode_text, WordStorage, LikelihoodBasedTextGenerator, decode_text
+from ngrams.ngram_trie import NGramTrie
 
 
 class DecodeCorpusTest(unittest.TestCase):
@@ -108,3 +108,6 @@ class DecodeCorpusTest(unittest.TestCase):
             self.assertTrue('<END>' not in sentence)
             self.assertTrue(sentence[0].isupper())
             self.assertTrue(sentence[-1].isalpha())
+
+if __name__ == "__main__":
+    unittest.main()

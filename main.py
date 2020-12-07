@@ -124,10 +124,45 @@ class NGramTextGenerator:
 class LikelihoodBasedTextGenerator(NGramTextGenerator):
 
     def _calculate_maximum_likelihood(self, word: int, context: tuple) -> float:
-        pass
+        validation.ensure_type({int: word, tuple: context})
+        validation.is_correct_length(context, self._n_gram_trie.size - 1)
+
+        current_n_gram = context + (word, )
+
+        try:
+            current_freq = self._n_gram_trie.n_gram_frequencies[current_n_gram]
+
+        except KeyError:
+            return 0
+
+        else:
+            common_freq = sum(
+                self._n_gram_trie.n_gram_frequencies[n_gram]
+                for n_gram in self._n_gram_trie.n_gram_frequencies
+                if n_gram[:-1] == context)
+            return current_freq / common_freq
 
     def _generate_next_word(self, context: tuple) -> int:
-        pass
+        validation.ensure_type({tuple: context})
+        validation.is_correct_length(context, self._n_gram_trie.size - 1)
+
+        self._word_storage._update_reverse_storage()
+        likelihood = {
+            self._calculate_maximum_likelihood(word, context): word
+            for word in self._word_storage._reverse_storage
+            }
+        max_likelihood = max(likelihood.keys())
+
+        return likelihood[max_likelihood]
+
+
+def decode_text(storage: WordStorage, encoded_text: tuple) -> tuple:
+    validation.ensure_type({WordStorage: storage, tuple: encoded_text})
+
+    text = ' '.join((storage.get_word(word) for word in encoded_text))
+    text = text.split('<END>')
+
+    return tuple(text)
 
 
 class BackOffGenerator(NGramTextGenerator):
@@ -137,10 +172,6 @@ class BackOffGenerator(NGramTextGenerator):
 
     def _generate_next_word(self, context: tuple) -> int:
         pass
-
-
-def decode_text(storage: WordStorage, encoded_text: tuple) -> tuple:
-    pass
 
 
 def save_model(model: NGramTextGenerator, path_to_saved_model: str):

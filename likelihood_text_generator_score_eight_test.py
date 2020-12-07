@@ -4,8 +4,8 @@ Tests for LikelihoodBasedTextGenerator class
 """
 
 import unittest
-from lab_4.main import WordStorage, encode_text, LikelihoodBasedTextGenerator
-from lab_4.ngrams.ngram_trie import NGramTrie
+from main import WordStorage, encode_text, LikelihoodBasedTextGenerator
+from ngrams.ngram_trie import NGramTrie
 
 
 class LikelihoodBasedTextGeneratorTest(unittest.TestCase):
@@ -157,7 +157,7 @@ class LikelihoodBasedTextGeneratorTest(unittest.TestCase):
 
         trie = NGramTrie(3, encoded)
 
-        bad_inputs = [[], {}, (2000, 1000, ), None, 9, 9.34, True]
+        bad_inputs = [[], {}, (2000, ), None, 9, 9.34, True]
 
         generator = LikelihoodBasedTextGenerator(storage, trie)
 
@@ -186,3 +186,7 @@ class LikelihoodBasedTextGeneratorTest(unittest.TestCase):
 
         actual = generator._generate_next_word(context)
         self.assertEqual(expected_word, actual)
+
+
+if __name__ == "__main__":
+    unittest.main()
