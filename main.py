@@ -170,8 +170,20 @@ class BackOffGenerator(NGramTextGenerator):
     def __init__(self, word_storage: WordStorage, n_gram_trie: NGramTrie, *args):
         super().__init__(word_storage, n_gram_trie)
 
+        tries = (n_gram_trie, ) + args
+        self._n_gram_tries = sorted(tries, key = lambda trie: trie.size)[::-1]
+
     def _generate_next_word(self, context: tuple) -> int:
-        pass
+        validation.ensure_type({tuple: context})
+
+        max_trie_size = len(context) + 1
+        self._n_gram_tries = [trie for trie in self._n_gram_tries if trie.size <= max_trie_size]
+
+        for trie in self._n_gram_tries:
+            self._n_gram_trie = trie
+            if n_gram := super()._generate_next_word(context):
+                return n_gram
+            context = context[:-1]
 
 
 def save_model(model: NGramTextGenerator, path_to_saved_model: str):

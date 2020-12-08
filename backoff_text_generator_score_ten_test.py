@@ -4,8 +4,8 @@ Tests for BackOffGenerator class
 """
 
 import unittest
-from lab_4.main import WordStorage, encode_text, BackOffGenerator
-from lab_4.ngrams.ngram_trie import NGramTrie
+from main import WordStorage, encode_text, BackOffGenerator
+from ngrams.ngram_trie import NGramTrie
 
 
 class BackOffGeneratorTest(unittest.TestCase):
@@ -157,7 +157,7 @@ class BackOffGeneratorTest(unittest.TestCase):
         two = NGramTrie(2, encoded)
         four = NGramTrie(4, encoded)
 
-        bad_inputs = [[], {}, (2000, 1000, ), None, 9, 9.34, True]
+        bad_inputs = [[], {}, None, 9, 9.34, True]
 
         generator = BackOffGenerator(storage, trie, two, four)
 
@@ -188,3 +188,6 @@ class BackOffGeneratorTest(unittest.TestCase):
 
         actual = generator._generate_next_word(context)
         self.assertEqual(expected_word, actual)
+
+if __name__ == "__main__":
+    unittest.main()
