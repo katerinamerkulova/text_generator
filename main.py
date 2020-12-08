@@ -117,6 +117,7 @@ class NGramTextGenerator:
     def _generate_sentence(self, context: tuple) -> tuple:
         validation.ensure_type({tuple: context})
 
+        # можно работать со списками, а в кортеж преобразовывать только на выходе из функции
         sent = context
         length = self._n_gram_trie.size - 1
         n_gram = sent[-length:]
@@ -133,6 +134,7 @@ class NGramTextGenerator:
     def generate_text(self, context: tuple, number_of_sentences: int) -> tuple:
         validation.ensure_type({tuple: context, int: number_of_sentences})
 
+        # можно работать со списками, а в кортеж преобразовывать только на выходе из функции
         text = tuple()
         length = self._n_gram_trie.size - 1
         for i in range(number_of_sentences):
@@ -149,6 +151,7 @@ class LikelihoodBasedTextGenerator(NGramTextGenerator):
 
         current_n_gram = context + (word, )
 
+        # перепиши?: current_freq = self._n_gram_trie.n_gram_frequencies.get(current_n_gram, 0)
         try:
             current_freq = self._n_gram_trie.n_gram_frequencies[current_n_gram]
 
@@ -159,16 +162,19 @@ class LikelihoodBasedTextGenerator(NGramTextGenerator):
             common_freq = sum(
                 self._n_gram_trie.n_gram_frequencies[n_gram]
                 for n_gram in self._n_gram_trie.n_gram_frequencies
-                if n_gram[:-1] == context)
+                if n_gram[:-1] == context
+                )
             return current_freq / common_freq
 
     def _generate_next_word(self, context: tuple) -> int:
         validation.ensure_type({tuple: context})
         validation.is_correct_length(context, self._n_gram_trie.size - 1)
 
+        # тогда метод _update... уже получается публичным
         self._word_storage._update_reverse_storage()
         likelihood = {
             self._calculate_maximum_likelihood(word, context): word
+            # то же самое про _reverse_storage
             for word in self._word_storage._reverse_storage
             }
         max_likelihood = max(likelihood.keys())
@@ -191,7 +197,7 @@ class BackOffGenerator(NGramTextGenerator):
         super().__init__(word_storage, n_gram_trie)
 
         tries = (n_gram_trie, ) + args
-        self._n_gram_tries = sorted(tries, key = lambda trie: trie.size)[::-1]
+        self._n_gram_tries = sorted(tries, key=lambda trie: trie.size)[::-1]
 
     def _generate_next_word(self, context: tuple) -> int:
         validation.ensure_type({tuple: context})
