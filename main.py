@@ -11,7 +11,10 @@ import validation
 def tokenize_by_sentence(text: str) -> tuple:
     validation.ensure_type({str: text})
 
+    # внутри [] не нужно маскировать . и ?
     clean_text = re.sub(r'[^\.!\?\w\s]', '', text)
+    # следующие две строчки можно заменить на одну, это будет быстрее:
+    # tokens = re.sub(r'([A-Z][\w\s]+)[.!?]?', r'\1'.lower() + ' <END>', text).split()
     sentences = re.sub(r'([A-Z][\w\s]+)[.!?]?', r'\1 <end>', clean_text).lower()
     splitted_text = tuple(re.sub(r'<end>', r'<END>', sentences).split())
     return splitted_text

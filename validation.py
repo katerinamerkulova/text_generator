@@ -4,6 +4,9 @@ A module for validation in lab_4
 
 
 def ensure_type(annotations):
+    # Если придираться, здесь instance неверно употреблено. instance = экземпляр класса, это у тебя
+    # arg. Здесь более правильное название переменной было бы klass или cls (и так, и так называют)
+    # А вместо arg как раз instance.
     for instance, arg in annotations.items():
         if not isinstance(arg, instance):
             raise ValueError
