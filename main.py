@@ -14,7 +14,7 @@ def tokenize_by_sentence(text: str) -> tuple:
     # внутри [] не нужно маскировать . и ?
     clean_text = re.sub(r'[^\.!\?\w\s]', '', text)
     # следующие две строчки можно заменить на одну, это будет быстрее:
-    # tokens = re.sub(r'([A-Z][\w\s]+)[.!?]?', r'\1'.lower() + ' <END>', text).split()
+    # tokens = tuple(re.sub(r'([A-Z][\w\s]+)[.!?]?', r'\1'.lower() + ' <END>', text).split())
     sentences = re.sub(r'([A-Z][\w\s]+)[.!?]?', r'\1 <end>', clean_text).lower()
     splitted_text = tuple(re.sub(r'<end>', r'<END>', sentences).split())
     return splitted_text
@@ -31,11 +31,16 @@ class WordStorage:
         validation.is_empty(word)
     
         if word not in self.storage:
+            # обновляем _reverse_storage!
+            # word_id = len(self.storage)
+            # self.storage[word] = word_id
+            # self._reverse_storage[word_id] = word
             self.storage[word] = len(self.storage)
         return self.storage[word]
 
     def get_id(self, word: str) -> int:
         validation.ensure_type({str: word})
+        # следующая строчка не нужна, т.к. self.storage[word] и так даст KeyError
         validation.is_in(word, self.storage)
 
         return self.storage[word]
@@ -50,6 +55,12 @@ class WordStorage:
 
     def get_word(self, word_id: int) -> str:
         validation.ensure_type({int: word_id})
+        # здесь лучше не вызывать метод _update... сразу, а сначала поискать word_id в
+        # _reverse_storage. Если не находится, тогда сделать рефреш _reverse_storage методом
+        # _update... и поискать word_id ещё раз. Если всё же не находится, вот тогда ошибка.
+        # таким образом, полный рефреш делается только как защитная мера от грёбаного тупого теста,
+        # а при нормальном сценарии в нём нет необходимости, т.к. обратный индекс пополняется
+        # автоматически в _put_word
         self._update_reverse_storage()
         validation.is_in(word_id, self._reverse_storage)
         
@@ -58,6 +69,7 @@ class WordStorage:
     def update(self, corpus: tuple):
         validation.ensure_type({tuple: corpus})
 
+        # ни в коем случае не set! просто `for word in corpus:`
         for word in set(corpus):
             self._put_word(word)
 
@@ -78,6 +90,11 @@ class NGramTextGenerator:
         validation.ensure_type({tuple: context})
         validation.is_correct_length(context, self._n_gram_trie.size - 1)
 
+        # поскольку ключи уникальны, слова с одинаковой частотой "затирают" друг друга
+        # на это можно сделать test case
+        # а здесь ещё неоправданно создаётся лишний словарь с теми же данными, что и в
+        # n_gram_frequencies, только в обратном порядке. Это неэкономно с т.зр. памяти,
+        # т.к. нужно найти всего одну пару ключ-значение с максимальной частотой.
         all_n_grams = {
             freq: n_gram for n_gram, freq 
             in self._n_gram_trie.n_gram_frequencies.items()
