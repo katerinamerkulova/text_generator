@@ -4,8 +4,8 @@ Tests for save and load model functions
 """
 
 import unittest
-from lab_4.main import WordStorage, encode_text, NGramTextGenerator, save_model, load_model
-from lab_4.ngrams.ngram_trie import NGramTrie
+from main import WordStorage, encode_text, NGramTextGenerator, save_model, load_model
+from ngrams.ngram_trie import NGramTrie
 
 
 class SaveModelTest(unittest.TestCase):
@@ -79,3 +79,6 @@ class LoadModelTest(unittest.TestCase):
         for word, id_num in generator._word_storage.storage.items():
             self.assertTrue(word in loaded_model._word_storage.storage)
             self.assertEqual(id_num, loaded_model._word_storage.storage[word])
+
+if __name__ == "__main__":
+    unittest.main()
