@@ -4,7 +4,7 @@ Tests encode_text function
 """
 
 import unittest
-from lab_4.main import encode_text, WordStorage
+from main import encode_text, WordStorage
 
 
 class EncodeCorpusTest(unittest.TestCase):
@@ -52,7 +52,7 @@ class EncodeCorpusTest(unittest.TestCase):
             can handle inappropriate sentence inputs
         """
         word_storage = WordStorage()
-        bad_inputs = (None, 123, 'test', [], {}, tuple())
+        bad_inputs = (None, 123, 'test', [], {})
 
         for bad_input in bad_inputs:
             self.assertRaises(ValueError, encode_text, word_storage, bad_input)
