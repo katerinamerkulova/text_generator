@@ -4,9 +4,7 @@ Tests encode_text function
 """
 
 import unittest
-from main import encode_text
-from main import WordStorage
-from unittest.mock import patch
+from lab_4.main import encode_text, WordStorage
 
 
 class EncodeCorpusTest(unittest.TestCase):
