@@ -54,7 +54,7 @@ class EncodeCorpusTest(unittest.TestCase):
             can handle inappropriate sentence inputs
         """
         word_storage = WordStorage()
-        bad_inputs = [None, 123, 'test', [], {}]
+        bad_inputs = (None, 123, 'test', [], {}, tuple())
 
         for bad_input in bad_inputs:
             self.assertRaises(ValueError, encode_text, word_storage, bad_input)
@@ -64,7 +64,7 @@ class EncodeCorpusTest(unittest.TestCase):
         Tests that encode_text function
             can handle inappropriate storage instance inputs
         """
-        bad_inputs = [None, 123, 'test', [], {}]
+        bad_inputs = (None, 123, 'test', [], {}, tuple())
         corpus = ('i', 'have', 'a', 'cat', '<END>')
 
         for bad_input in bad_inputs:
